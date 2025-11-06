@@ -1,0 +1,171 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+}
+
+header {
+  background: #1e3d59;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  
+  
+}
+header img {
+  width: 300px;
+  height: 200px;
+}
+
+#searchBox {
+  width: 80%;
+  max-width: 500px;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+main {
+  display: flex;
+  height: 80vh;
+}
+
+/* Sidebar */
+#sidebar {
+  width: 300px;
+  background: #fff;
+  border-right: 2px solid #ddd;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+#sidebar h2 {
+  color: #1e3d59;
+  margin-bottom: 10px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+#categoryFilter {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#placeList {
+  list-style: none;
+  padding: 0;
+}
+
+#placeList li {
+  background: #e9f0f7;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#placeList li:hover {
+  background: #d0e4f0;
+}
+
+/* Map */
+#map {
+  flex: 1;
+}
+
+/* Footer */
+footer {
+  background: #1e3d59;
+  color: #ddd;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9em;
+}
+
+footer p a{
+    text-decoration: none;
+    color: #fff;
+    font-style: oblique;
+    font-weight: 600;
+}
+
+footer p a:hover{
+    text-decoration: underline;
+}
+
+#locateBtn {
+  position: absolute;
+  right: 20px;
+  bottom: 30px;
+  background: #1e3d59;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: background 0.3s;
+  z-index: 1000; /* ensures it appears above the map */
+}
+
+#locateBtn:hover {
+  background: #274a72;
+}
+
+.map-legend {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.map-legend h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.map-legend p {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-legend img {
+  width: 15px;
+  height: 25px;
+}
+
+
+@media (max-width: 768px) {
+  main {
+    flex-direction: column;
+  }
+  #sidebar {
+    width: 90%;
+    height: 250px;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+  #map {
+    height: calc(100vh - 380px);
+  }
+  #locateBtn {
+    bottom: 80px;
+  }
+}

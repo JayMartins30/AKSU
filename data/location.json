@@ -1,0 +1,44 @@
+[
+  {
+    "name": "ICT Center",
+    "coords": [4.970722, 7.756978],
+    "desc": "Main ICT building with computer labs and Wi-Fi access.",
+    "category": "academic"
+  },
+  {
+    "name": "Library",
+    "coords": [4.970672, 7.757128],
+    "desc": "Central library for all departments.",
+    "category": "academic"
+  },
+  {
+    "name": "Admin Block",
+    "coords": [4.970402, 7.756828],
+    "desc": "Administrative offices and records.",
+    "category": "administration"
+  },
+  {
+    "name": "Student Hostel A",
+    "coords": [4.970442, 7.757098],
+    "desc": "Main male hostel.",
+    "category": "hostel"
+  },
+  {
+    "name": "Cafeteria",
+    "coords": [4.970572, 7.756998],
+    "desc": "Main cafeteria for students and staff.",
+    "category": "facility"
+  },
+  {
+    "name": "Engineering Lecture Hall",
+    "coords": [4.970622, 7.757078],
+    "desc": "Faculty of Engineering main lecture hall.",
+    "category": "lecture"
+  },
+  {
+    "name": "Pavilion Hall 1",
+    "coords": [4.970342, 7.756978],
+    "desc": "Main Hall.",
+    "category": "lecture"
+  }
+]

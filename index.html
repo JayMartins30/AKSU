@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AKSU | Campus Guide</title>
+  <link rel="icon" type="images/png" href="./images/aksu 2.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+  <header>
+    <img src="./images/aksu 2.png" alt="AKSU icon">
+    <h1> AKSU | Campus Guide</h1>
+    <input type="text" id="searchBox" placeholder="Search for a place...">
+  </header>
+
+  <main>
+    <aside id="sidebar">
+      <h2>📍 Places</h2>
+      <div class="filter-group">
+        <label for="categoryFilter">Filter by category:</label>
+        <select id="categoryFilter">
+          <option value="all">All</option>
+          <option value="academic">Academic</option>
+          <option value="administration">Administration</option>
+          <option value="facility">Facilities</option>
+          <option value="hostel">Hostels</option>
+          <option value="library">Library</option>
+          <option value="lab">Labs</option>
+          <option value="lecture">Lecture Halls</option>
+        </select>
+      </div>
+
+      <ul id="placeList"></ul>
+    </aside>
+
+    <div id="map"></div>
+    <button id="locateBtn">Locate Me</button>
+  </main>
+
+  <footer>
+    <p>© 2025 Campus Locator | Built with ❤️ and code @ <a href="https://martinsedem.vercel.app">Jay Martins</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="/script.js"></script>
+</body>
+</html>
