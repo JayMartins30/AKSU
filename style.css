@@ -79,6 +79,8 @@ main {
 /* Map */
 #map {
   flex: 1;
+  height:100vh;
+  width:100%;
 }
 
 /* Footer */
@@ -169,3 +171,4 @@ footer p a:hover{
     bottom: 80px;
   }
 }
+
