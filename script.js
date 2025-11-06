@@ -1,6 +1,8 @@
 // Initialize map centered on your campus
 const map = L.map('map').setView([4.970411, 7.756878], 16);
 
+document.getElementById('year').textContent = new Date().getFullYear();
+
 // Add map tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
@@ -196,3 +198,4 @@ legend.onAdd = function () {
 };
 
 legend.addTo(map);
+
