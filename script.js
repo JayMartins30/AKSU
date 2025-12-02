@@ -1,201 +1,157 @@
-// Initialize map centered on your campus
+
+
+// Initialize map centered on main campus
 const map = L.map('map').setView([4.970411, 7.756878], 16);
 
-document.getElementById('year').textContent = new Date().getFullYear();
-
-// Add map tiles
+// Add map tiles (OpenStreetMap)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Main campus marker
-L.marker([4.970411, 7.756878])
-  .addTo(map)
-  .bindPopup("<b>Akwa Ibom State University</b><br>Main Campus, Ikot Akpaden, Mkpat Enin LGA.")
-  .openPopup();
+let currentCampus = 'main';
+let markers = [];
+let places = [];
 
-// Define colors for each category
-const iconColors = {
-  academic: 'blue',
-  administration: 'red',
-  hostel: 'green',
-  facility: 'orange',
-  lecture: 'purple'
-};
 
-// Function to create colored marker icons
-function createIcon(color) {
-  return new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+// Toast Notification
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `show ${type === 'error' ? 'error' : ''}`;
+
+  setTimeout(() => {
+    toast.className = toast.className.replace('show', '');
+  }, 3000);
+}
+
+
+
+// Load location data
+
+function loadLocations() {
+  const file = currentCampus === 'main' ? 'data/locations.json' : 'data/locations_obioakpa.json';
+  fetch(file)
+    .then(res => res.json())
+    .then(data => {
+      places = data;
+      renderMarkers();
+      renderList();
+    })
+    .catch(err => console.error('Error loading locations:', err));
+}
+
+
+// Render markers on map
+
+function renderMarkers() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  places.forEach(place => {
+    const marker = L.marker([place.lat, place.lng]).addTo(map);
+    marker.bindPopup(`
+      <b>${place.name}</b><br>
+      <i>${place.category}</i><br>
+      <button onclick="openInGoogleMaps(${place.lat}, ${place.lng})">Open in Google Maps</button>
+    `);
+    markers.push(marker);
   });
 }
 
-// Load location data
-fetch('data/location.json')
-  .then(res => res.json())
-  .then(locations => {
-    const placeList = document.getElementById("placeList");
-    const searchBox = document.getElementById("searchBox");
-    const categoryFilter = document.getElementById("categoryFilter");
 
-    // Keep reference to markers
-    const markers = [];
+// Render list in sidebar
 
-    // Function to add markers to map
-    function displayMarkers(data) {
-      // Clear existing markers
-      markers.forEach(m => map.removeLayer(m));
-      markers.length = 0;
+function renderList(listData = places) {
+  const list = document.getElementById('placeList');
+  list.innerHTML = '';
 
-      // Clear sidebar list
-      placeList.innerHTML = "";
-
-      data.forEach(place => {
-        // Skip invalid coordinates
-        if (!place.coords || place.coords.length !== 2) return;
-
-        const color = iconColors[place.category] || 'blue';
-        const icon = createIcon(color);
-
-        const popupContent = `
-          <div style="text-align:center;">
-            <h4>${place.name}</h4>
-            ${place.image ? `<img src="${place.image}" width="150" style="border-radius:8px; margin-bottom:8px;">` : ""}
-            <p>${place.desc}</p>
-            <small><b>Category:</b> ${place.category}</small>
-          </div>
-        `;
-
-        const marker = L.marker(place.coords, { icon })
-          .addTo(map)
-          .bindPopup(popupContent);
-
-        markers.push(marker);
-
-        // Add to sidebar list
-        const li = document.createElement("li");
-        li.textContent = place.name;
-        li.addEventListener("click", () => {
-          map.setView(place.coords, 18);
-          marker.openPopup();
-        });
-        placeList.appendChild(li);
-      });
-    }
-
-    // Initial load
-    displayMarkers(locations);
-
-    // Filter by category
-    categoryFilter.addEventListener("change", () => {
-      const selected = categoryFilter.value;
-      const filtered =
-        selected === "all"
-          ? locations
-          : locations.filter(p => p.category === selected);
-      displayMarkers(filtered);
-    });
-
-    // Search functionality
-    searchBox.addEventListener("input", e => {
-      const query = e.target.value.toLowerCase().trim();
-
-      if (query === "") {
-        displayMarkers(locations);
-        return;
-      }
-
-      const filtered = locations.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.desc.toLowerCase().includes(query)
-      );
-
-      displayMarkers(filtered);
-
-      // Zoom to first result
-      if (filtered.length > 0) {
-        const first = filtered[0];
-        map.setView(first.coords, 18);
-      }
-    });
-  })
-  .catch(err => console.error("Error loading locations:", err));
-
-// Locate Me button functionality
-const locateBtn = document.getElementById("locateBtn");
-
-locateBtn.addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by your browser.");
+  if (listData.length === 0) {
+    list.innerHTML = '<li>No results found.</li>';
     return;
   }
 
-  locateBtn.textContent = "Locating...";
-  locateBtn.disabled = true;
+  listData.forEach(p => {
+    const li = document.createElement('li');
+    li.textContent = p.name;
+    li.onclick = () => {
+      map.setView([p.lat, p.lng], 18);
+      openInGoogleMaps(p.lat, p.lng);
+    };
+    list.appendChild(li);
+  });
+}
 
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      const { latitude, longitude } = position.coords;
-      const userCoords = [latitude, longitude];
 
-      // Add or move user marker
-      if (window.userMarker) {
-        map.removeLayer(window.userMarker);
-      }
+// Open in Google Maps
 
-      window.userMarker = L.marker(userCoords, {
-        title: "You are here"
-      }).addTo(map).bindPopup("<b>You are here 📍</b>").openPopup();
+function openInGoogleMaps(lat, lng) {
+  const url = `https://www.google.com/maps?q=${lat},${lng}`;
+  window.open(url, '_blank');
+}
 
-      map.setView(userCoords, 17);
-      locateBtn.textContent = "📍 Locate Me";
-      locateBtn.disabled = false;
-    },
-    error => {
-      alert("Unable to retrieve your location.");
-      console.error(error);
-      locateBtn.textContent = "📍 Locate Me";
-      locateBtn.disabled = false;
-    }
-  );
+
+// Campus Selector
+
+document.getElementById('campusSelect').onchange = (e) => {
+  currentCampus = e.target.value === 'main' ? 'main' : 'obioakpa';
+  showToast(`Switched to ${currentCampus === 'main' ? 'Main Campus (Ikot Akpaden)' : 'Obio Akpa Campus'}`);
+  loadLocations();
+};
+
+
+// Category Filter
+document.getElementById('categoryFilter').onchange = () => {
+  const category = document.getElementById('categoryFilter').value;
+  const filtered = category === 'all'
+    ? places
+    : places.filter(p => p.category === category);
+  renderList(filtered);
+};
+
+
+// Search Functionality
+
+document.getElementById('searchBox').addEventListener('input', (e) => {
+  const term = e.target.value.toLowerCase();
+  const results = places.filter(p => p.name.toLowerCase().includes(term));
+  renderList(results);
 });
 
 
-// 🧭 Collapsible Map Legend
-const legend = L.control({ position: "bottomright" });
+// Locate Me
 
-legend.onAdd = function () {
-  const div = L.DomUtil.create("div", "map-legend collapsed");
-  div.innerHTML = `
-    <div class="legend-header">
-      <h4>Campus Legend</h4>
-     
-    </div>
-     <button id="toggleLegend">☰</button>
-    <div class="legend-content">
-      <p><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png"> Academic</p>
-      <p><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png"> Administration</p>
-      <p><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png"> Hostel</p>
-      <p><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png"> Facility</p>
-      <p><img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png"> Lecture Hall</p>
-    </div>
-  `;
+document.getElementById('locateBtn').onclick = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
 
-  // Toggle collapse/expand
-  setTimeout(() => {
-    const toggleBtn = document.getElementById("#toggleLegend");
-    toggleBtn.addEventListener("click", () => {
-      div.classList.toggle("collapsed");
+      
+      if (window.userMarker) map.removeLayer(window.userMarker);
+
+      
+      window.userMarker = L.marker([latitude, longitude])
+        .addTo(map)
+        .bindPopup('📍 You are here!')
+        .openPopup();
+
+      
+      map.flyTo([latitude, longitude], 18);
+
+    }, err => {
+      showToast('Unable to get your location.', 'error');
+      console.error(err);
+    }, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
     });
-  }, 100);
-
-  return div;
+  } else {
+    showToast('Geolocation not supported by your browser.', 'error');
+  }
 };
 
-legend.addTo(map);
+document.getElementById('year').textContent = new Date().getFullYear();
 
+
+loadLocations();

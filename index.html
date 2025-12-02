@@ -1,51 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AKSU | Campus Guide</title>
-  <link rel="icon" type="images/png" href="./images/aksu 2.png">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AKSU Campus Guide - Welcome</title>
+  <link rel="icon" type="image/png" href="./images/aksu 2.png">
+
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    
+    .bg-slideshow {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-slideshow .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 1;
+    }
+
+
+    .bg-slideshow img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      animation: slideShow 18s infinite;
+    }
+
+    .bg-slideshow img:nth-child(1) { animation-delay: 0s; }
+    .bg-slideshow img:nth-child(2) { animation-delay: 6s; }
+    .bg-slideshow img:nth-child(3) { animation-delay: 12s; }
+    .bg-slideshow img:nth-child(4) { animation-delay: 18s; }
+    .bg-slideshow img:nth-child(5) { animation-delay: 24s; }
+    .bg-slideshow img:nth-child(6) { animation-delay: 30s; }
+    .bg-slideshow img:nth-child(7) { animation-delay: 36s; }
+
+
+
+    @keyframes slideShow {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      35% { opacity: 1; }
+      45% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+   
+
+    .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 2;
+      position: relative;
+      color: white;
+      animation: fadeIn 1.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      width: 140px;
+      margin-bottom: 20px;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 0 0 8px rgba(0,0,0,0.6);
+    }
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+      text-shadow: 0 0 8px rgba(0,0,0,0.6);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: white ;
+      color: #024b30;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      text-decoration: none;
+      transition: 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      background: #024b30;
+      color: #fff;
+    }
+
+    #preloader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: opacity 0.5s ease;
+    }
+
+    .loader {
+      border: 6px solid #ddd;
+      border-top: 6px solid green;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <img src="./images/aksu 2.png" alt="AKSU icon">
-    <h1> AKSU | Campus Guide</h1>
-    <input type="text" id="searchBox" placeholder="Search for a place...">
-  </header>
 
-  <main>
-    <aside id="sidebar">
-      <h2>📍 Places</h2>
-      <div class="filter-group">
-        <label for="categoryFilter">Filter by category:</label>
-        <select id="categoryFilter">
-          <option value="all">All</option>
-          <option value="academic">Academic</option>
-          <option value="administration">Administration</option>
-          <option value="facility">Facilities</option>
-          <option value="hostel">Hostels</option>
-          <option value="library">Library</option>
-          <option value="lab">Labs</option>
-          <option value="lecture">Lecture Halls</option>
-        </select>
-      </div>
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="loader"></div>
+  </div>
 
-      <ul id="placeList"></ul>
-    </aside>
 
-    <div id="map"></div>
-    <button id="locateBtn">Locate Me</button>
-  </main>
 
-  <footer>
-    <p>© <span id="year"></span> Campus Locator | Built with ❤️ and code @ <a href="https://martinsedem.vercel.app">Jay Martins</a></p>
-  </footer>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="script.js"></script>
+  <div class="bg-slideshow">
+    <img src="images/aksu pic.jpg" alt="">
+    <img src="images/aksuu.jpg" alt="">
+    <img src="images/images00.jpg" alt="">
+    <img src="images/com sci.jpg" alt="">
+    <img src="images/aduit.jpg" alt="">
+    <img src="images/ict aksu.jpg" alt="">
+    <img src="images/aksu icon.jpg" alt="">
+
+    <div class="overlay"></div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <img src="images/aksu 2.png" class="logo" alt="AKSU Logo">
+
+    <h1>Welcome to AKSU Campus Guide</h1>
+    <p>Your smart navigation companion around Akwa Ibom State University.</p>
+
+    <a href="main.html" class="btn" id="enterBtn">Enter Campus Guide</a>
+  </div>
+
+  <script>
+
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById("preloader").style.opacity = "0";
+
+            setTimeout(() => {
+             document.getElementById("preloader").style.display = "none";
+            }, 500);
+        }, 5000);
+    };
+
+    document.getElementById("enterBtn").addEventListener("click", function (e) {
+  e.preventDefault(); 
+
+  const preloader = document.getElementById("preloader");
+  preloader.style.display = "flex"; 
+  preloader.style.opacity = "1";
+
+  
+  setTimeout(() => {
+    window.location.href = "main.html";
+  }, 3000);
+});
+
+
+    
+  </script>
+
 </body>
 </html>
-
-
