@@ -1,9 +1,9 @@
 
 
-// Initialize map centered on main campus
+
 const map = L.map('map').setView([4.970411, 7.756878], 16);
 
-// Add map tiles (OpenStreetMap)
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
@@ -13,7 +13,7 @@ let markers = [];
 let places = [];
 
 
-// Toast Notification
+
 
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
@@ -27,7 +27,7 @@ function showToast(message, type = 'success') {
 
 
 
-// Load location data
+
 
 function loadLocations() {
   const file = currentCampus === 'main' ? 'data/locations.json' : 'data/locations_obioakpa.json';
@@ -42,7 +42,7 @@ function loadLocations() {
 }
 
 
-// Render markers on map
+
 
 function renderMarkers() {
   markers.forEach(m => map.removeLayer(m));
@@ -60,7 +60,6 @@ function renderMarkers() {
 }
 
 
-// Render list in sidebar
 
 function renderList(listData = places) {
   const list = document.getElementById('placeList');
@@ -83,7 +82,6 @@ function renderList(listData = places) {
 }
 
 
-// Open in Google Maps
 
 function openInGoogleMaps(lat, lng) {
   const url = `https://www.google.com/maps?q=${lat},${lng}`;
@@ -91,7 +89,6 @@ function openInGoogleMaps(lat, lng) {
 }
 
 
-// Campus Selector
 
 document.getElementById('campusSelect').onchange = (e) => {
   currentCampus = e.target.value === 'main' ? 'main' : 'obioakpa';
@@ -100,7 +97,6 @@ document.getElementById('campusSelect').onchange = (e) => {
 };
 
 
-// Category Filter
 document.getElementById('categoryFilter').onchange = () => {
   const category = document.getElementById('categoryFilter').value;
   const filtered = category === 'all'
@@ -110,7 +106,6 @@ document.getElementById('categoryFilter').onchange = () => {
 };
 
 
-// Search Functionality
 
 document.getElementById('searchBox').addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
@@ -119,7 +114,6 @@ document.getElementById('searchBox').addEventListener('input', (e) => {
 });
 
 
-// Locate Me
 
 document.getElementById('locateBtn').onclick = () => {
   if (navigator.geolocation) {
@@ -155,3 +149,4 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 
 loadLocations();
+
